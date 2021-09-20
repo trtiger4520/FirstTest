@@ -4,7 +4,8 @@ namespace FirstTest.Service.Account
 {
     public interface IUserService
     {
-        UserDto Add(UserDto userDto);
+        UserDto Register(UserRegisterContent content);
         UserDto GetUser(Guid id);
+        UserDto LoginUser(string userName, string password);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace FirstTest.WebServer.ServicesExtensions
 {
@@ -7,8 +9,12 @@ namespace FirstTest.WebServer.ServicesExtensions
     {
         public static IServiceCollection AddSwaggerDoc(this IServiceCollection services)
         {
-            services.AddSwaggerDocument(option => { 
-                //option
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo systemVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            services.AddOpenApiDocument(option => {
+                option.Title = "First Test System Solution";
+                option.Version = systemVersionInfo.FileVersion;
             });
 
             return services;

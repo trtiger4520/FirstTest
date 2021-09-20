@@ -1,20 +1,19 @@
-﻿using System;
+﻿using FirstTest.Core.Account;
+using Microsoft.AspNetCore.Identity;
+using System;
 
-namespace FirstTest.Core.Account
+namespace FirstTest.WebServer.Model
 {
-    /// <summary>
-    /// 使用者
-    /// </summary>
-    public partial class User : IUser
+    public class AppUser : IdentityUser<Guid>, IUser
     {
         /// <summary>
         /// 使用者ID
         /// </summary>
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
         /// <summary>
         /// 使用者名稱
         /// </summary>
-        public string UserName { get; set; }
+        public override string UserName { get; set; }
         /// <summary>
         /// 密碼
         /// </summary>
@@ -30,7 +29,7 @@ namespace FirstTest.Core.Account
         /// <summary>
         /// 電子郵件
         /// </summary>
-        public string Email { get; set; }
+        public override string Email { get; set; }
         /// <summary>
         /// 性別
         /// </summary>
@@ -47,23 +46,5 @@ namespace FirstTest.Core.Account
         /// 註冊時間
         /// </summary>
         public DateTime RegistrationTime { get; set; }
-    }
-    /// <summary>
-    /// 性別
-    /// </summary>
-    public enum Gender
-    {
-        /// <summary>
-        /// 男性
-        /// </summary>
-        Male,
-        /// <summary>
-        /// 女性
-        /// </summary>
-        Female,
-        /// <summary>
-        /// 通用
-        /// </summary>
-        Unisex
     }
 }

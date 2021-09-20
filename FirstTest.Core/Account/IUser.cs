@@ -1,45 +1,51 @@
-﻿using FirstTest.Core.Account;
-using System;
+﻿using System;
 
-namespace FirstTest.Service.Account
+namespace FirstTest.Core.Account
 {
-    public class UserDto
+    /// <summary>
+    /// 使用者
+    /// </summary>
+    public interface IUser
     {
         /// <summary>
         /// 使用者ID
         /// </summary>
-        public Guid Id { get; set; }
+        Guid Id { get; set; }
         /// <summary>
         /// 使用者名稱
         /// </summary>
-        public string UserName { get; set; }
+        string UserName { get; set; }
+        /// <summary>
+        /// 密碼
+        /// </summary>
+        string Password { get; set; }
         /// <summary>
         /// 完整名稱
         /// </summary>
-        public string[] FullName { get; set; }
+        string[] FullName { get; set; }
         /// <summary>
         /// 地址
         /// </summary>
-        public AddressDto Address { get; set; }
+        Address Address { get; set; }
         /// <summary>
         /// 電子郵件
         /// </summary>
-        public string Email { get; set; }
+        string Email { get; set; }
         /// <summary>
         /// 性別
         /// </summary>
-        public Gender Gender { get; set; }
+        Gender Gender { get; set; }
         /// <summary>
         /// 生日
         /// </summary>
-        public DateTime DateOfBirth { get; set; }
+        DateTime DateOfBirth { get; set; }
         /// <summary>
         /// 已停用
         /// </summary>
-        public bool Deactivate { get; set; }
+        bool Deactivate { get; set; }
         /// <summary>
         /// 註冊時間
         /// </summary>
-        public DateTime RegistrationTime { get; set; }
+        DateTime RegistrationTime { get; set; }
     }
 }

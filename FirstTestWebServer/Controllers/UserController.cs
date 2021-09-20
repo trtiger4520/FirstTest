@@ -1,32 +1,22 @@
 ﻿using FirstTest.Service.Account;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 
 namespace FirstTest.WebServer.Controllers
 {
-    [Route("User")]
+    [Route("api/User")]
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly ILogger<UserController> logger;
         private readonly IUserService userService;
 
-        public UserController(IUserService userService)
+        public UserController(ILogger<UserController> logger, IUserService userService)
         {
+            this.logger = logger;
             this.userService = userService;
-        }
-
-        /// <summary>
-        /// 建立新使用者
-        /// </summary>
-        /// <param name="name">名稱</param>
-        /// <returns></returns>
-        [HttpPost, Route("Create")]
-        public UserDto CreateUser(string name)
-        {
-            return userService.Add(new UserDto() { 
-                UserName = name,
-            });
         }
 
         /// <summary>
@@ -37,6 +27,7 @@ namespace FirstTest.WebServer.Controllers
         [HttpGet("{userid}")]
         public UserDto GetUser(string userid)
         {
+            logger.LogTrace("API {controller}", this.HttpContext.Request.Path);
             return userService.GetUser(Guid.Parse(userid));
         }
     }
