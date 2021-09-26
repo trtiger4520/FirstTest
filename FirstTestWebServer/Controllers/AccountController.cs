@@ -1,17 +1,15 @@
 ﻿using FirstTest.Service.Account;
 using FirstTest.WebServer.Model.Config;
 using FirstTest.WebServer.Model.Login;
+using FirstTest.WebServer.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace FirstTest.WebServer.Controllers
 {
-    [Route("api/Account")]
+    [Route("api/v{version:apiVersion}/Account")]
     [ApiController]
     public class AccountController : Controller
     {
@@ -30,48 +28,42 @@ namespace FirstTest.WebServer.Controllers
         /// <param name="content">註冊內容</param>
         /// <returns></returns>
         [HttpPost, Route("Register")]
+        [ApiVersion("1.0")]
         public UserDto Register(UserRegisterContent content)
         {
             return userService.Register(content);
         }
+
         /// <summary>
         /// 登入
         /// </summary>
         /// <param name="content">登入資訊</param>
         /// <returns></returns>
         [HttpPost, Route("Login")]
+        [ApiVersion("1.0")]
         public LoginResult Login(LoginContent content)
         {
-            var user = userService.LoginUser(content.UserName, content.Password);
+            var user = userService.FindUser(content.UserName, content.Password);
 
             if (user is null)
                 return LoginResult.False();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(systemConfig.Secret);
-            var day = content.RememberMe ? 30 : 7;
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(day),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), 
-                    SecurityAlgorithms.HmacSha512)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-
-
-            return LoginResult.Success(
-                tokenString, 
-                "Bearer",
-                TimeSpan.FromDays(day).Seconds,
-                "",
+            var expires = TimeSpan.FromDays(content.RememberMe ? 30 : 7);
+            var bearerToken = Security.GenerateBearerToken(
+                systemConfig.Secret,
+                expires,
                 user);
+
+            return LoginResult.Success(bearerToken, user);
+        }
+
+        [Authorize]
+        [HttpPost, Route("RefreshToken")]
+        [ApiVersion("1.0")]
+        public IToken RefreshToken(string refreshToken)
+        {
+            var expires = TimeSpan.FromDays(7);
+            return Security.RefreshToken(systemConfig.Secret, expires, refreshToken);
         }
     }
 }

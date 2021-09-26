@@ -40,7 +40,7 @@ namespace FirstTest.Service.Account
             return mapper.Map<UserDto>(user);
         }
 
-        public UserDto LoginUser(string userName, string password)
+        public UserDto FindUser(string userName, string password)
         {
             password = Hasher.PasswordHasher(password);
 

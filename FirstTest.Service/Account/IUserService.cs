@@ -6,6 +6,6 @@ namespace FirstTest.Service.Account
     {
         UserDto Register(UserRegisterContent content);
         UserDto GetUser(Guid id);
-        UserDto LoginUser(string userName, string password);
+        UserDto FindUser(string userName, string password);
     }
 }

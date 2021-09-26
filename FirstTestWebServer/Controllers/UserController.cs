@@ -1,12 +1,13 @@
 ﻿using FirstTest.Service.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 
 namespace FirstTest.WebServer.Controllers
 {
-    [Route("api/User")]
+    [Authorize]
+    [Route("api/v{version:apiVersion}/User")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -25,10 +26,16 @@ namespace FirstTest.WebServer.Controllers
         /// <param name="userid">使用者ID</param>
         /// <returns></returns>
         [HttpGet("{userid}")]
-        public UserDto GetUser(string userid)
+        [ApiVersion("1.0")]
+        public IActionResult GetUser(string userid)
         {
             logger.LogTrace("API {controller}", this.HttpContext.Request.Path);
-            return userService.GetUser(Guid.Parse(userid));
+            var user = userService.GetUser(Guid.Parse(userid));
+
+            if (user is null)
+                return NotFound(null);
+
+            return Ok(user);
         }
     }
 }
