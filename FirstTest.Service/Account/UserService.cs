@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using FirstTest.Core.Account;
+﻿using FirstTest.Core.Account;
 using FirstTest.Database.FirstTestDB;
 using FirstTest.Service.Utility;
+using MapsterMapper;
 using System;
 using System.Linq;
 

@@ -1,6 +1,5 @@
 ﻿using FirstTest.Service;
-using FirstTest.Service.Account;
-using Microsoft.Extensions.DependencyInjection;
+using Mapster;
 
 namespace FirstTest.WebServer.ServicesExtensions
 {
@@ -8,11 +7,17 @@ namespace FirstTest.WebServer.ServicesExtensions
     {
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
-            services.AddAutoMapper(config => {
-                config.AddProfile(new Map());
+
+            services.AddSingleton(provider =>
+            {
+                var config = new TypeAdapterConfig();
+
+                config.ConfigServicesMapper();
+
+                return config;
             });
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddServices();
 
             return services;
         }

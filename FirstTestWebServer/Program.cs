@@ -1,27 +1,61 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using FirstTest.Database.FirstTestDB;
+using FirstTest.WebServer.Model.Config;
+using FirstTest.WebServer.ServicesExtensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.IO;
 
-namespace FirstTest.WebServer
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog(Log.Logger);
+builder.Services.Configure<SystemConfig>(
+    builder.Configuration.GetSection(SystemConfig.Name));
+builder.Services.AddDbContext<TestDBContext>(option =>
+                option.UseInMemoryDatabase("TestDB"));
+builder.Services.AddCoreServices();
+builder.Services.AddAuthentication("jwt")
+    .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>("jwt", option => { });
+builder.Services.AddControllers();
+builder.Services.AddApiVersioning(option => {
+    option.ReportApiVersions = true;
+    option.AssumeDefaultVersionWhenUnspecified = true;
+    option.DefaultApiVersion = new ApiVersion(1, 0);
+});
+builder.Services.AddSwaggerDoc();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    app.UseDeveloperExceptionPage();
+}
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog((context, config) => {
-                    //var root = context.HostingEnvironment.ContentRootPath;
-                    //var filePath = Path.Combine(root, "./Logs");
-                    //config.WriteTo.File(filePath);
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+app.UseHsts();
+
+
+app.UseSwaggerDoc();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "應用程式發生嚴重錯誤，已立即停止！");
+}
+finally
+{
+    Log.CloseAndFlush();
 }

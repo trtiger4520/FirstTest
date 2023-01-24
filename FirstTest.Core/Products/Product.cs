@@ -8,6 +8,6 @@ namespace FirstTest.Core.Products
 {
     public class Product
     {
-        
+
     }
 }
