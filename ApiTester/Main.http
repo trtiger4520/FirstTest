@@ -1,0 +1,32 @@
+@base = https://localhost:5001
+@version = 1.0
+@token = {{login.response.body.token.token}}
+@userid = {{login.response.body.user.id}}
+
+###
+
+POST {{base}}/api/v{{version}}/Account/Register
+Content-Type: application/json
+
+{
+  "userName": "peter",
+  "password": "aaZZ_1234656",
+  "gender": 0
+}
+
+###
+# @name login
+
+POST {{base}}/api/v{{version}}/Account/Login
+Content-Type: application/json
+
+{
+  "userName": "peter",
+  "password": "aaZZ_1234656",
+  "rememberMe": true
+}
+
+###
+
+GET {{base}}/api/v{{version}}/User/{{userid}}
+Authorization: {{token}}

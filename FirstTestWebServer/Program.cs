@@ -3,7 +3,9 @@ using FirstTest.WebServer.Model.Config;
 using FirstTest.WebServer.ServicesExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -13,15 +15,25 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog(Log.Logger);
+
 builder.Services.Configure<SystemConfig>(
     builder.Configuration.GetSection(SystemConfig.Name));
+
 builder.Services.AddDbContext<TestDBContext>(option =>
-                option.UseInMemoryDatabase("TestDB"));
+    option.UseInMemoryDatabase("TestDB"));
+
 builder.Services.AddCoreServices();
-builder.Services.AddAuthentication("jwt")
-    .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>("jwt", option => { });
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer(options =>
+    {
+        builder.Configuration.GetSection("JwtSettings").Bind(options);
+    });
+
 builder.Services.AddControllers();
-builder.Services.AddApiVersioning(option => {
+
+builder.Services.AddApiVersioning(option =>
+{
     option.ReportApiVersions = true;
     option.AssumeDefaultVersionWhenUnspecified = true;
     option.DefaultApiVersion = new ApiVersion(1, 0);
@@ -35,8 +47,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseHttpsRedirection();
 app.UseHsts();
-
 
 app.UseSwaggerDoc();
 
@@ -53,7 +65,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "À³¥Îµ{¦¡µo¥ÍÄY­«¿ù»~¡A¤w¥ß§Y°±¤î¡I");
+    Log.Fatal(ex, "ï¿½ï¿½ï¿½Îµ{ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½~ï¿½Aï¿½wï¿½ß§Yï¿½ï¿½ï¿½ï¿½I");
 }
 finally
 {

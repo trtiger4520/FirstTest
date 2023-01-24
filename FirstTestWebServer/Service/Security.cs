@@ -1,9 +1,7 @@
 ﻿using FirstTest.Service.Account;
 using FirstTest.WebServer.Model.Login;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -50,7 +48,7 @@ namespace FirstTest.WebServer.Service
                 tokenValidationParameters(key), 
                 out SecurityToken securityToken);
 
-            if (!(securityToken is JwtSecurityToken jwtSecurityToken) || 
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
                 !jwtSecurityToken.Header.Alg.Equals(Algorithms, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
             

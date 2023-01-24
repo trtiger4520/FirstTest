@@ -1,5 +1,6 @@
 ﻿using FirstTest.Service;
 using Mapster;
+using MapsterMapper;
 
 namespace FirstTest.WebServer.ServicesExtensions
 {
@@ -7,15 +8,12 @@ namespace FirstTest.WebServer.ServicesExtensions
     {
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
+            var config = new TypeAdapterConfig();
 
-            services.AddSingleton(provider =>
-            {
-                var config = new TypeAdapterConfig();
+            config.ConfigServicesMapper();
+            services.AddSingleton(config);
 
-                config.ConfigServicesMapper();
-
-                return config;
-            });
+            services.AddScoped<IMapper, ServiceMapper>();
 
             services.AddServices();
 

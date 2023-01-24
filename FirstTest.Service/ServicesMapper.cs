@@ -4,7 +4,7 @@ using Mapster;
 
 namespace FirstTest.Service;
 
-public static class ServiceMapper
+public static class ServicesMapper
 {
     public static void ConfigServicesMapper(this TypeAdapterConfig config)
     {
