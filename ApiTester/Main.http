@@ -23,10 +23,10 @@ Content-Type: application/json
 {
   "userName": "peter",
   "password": "aaZZ_1234656",
-  "rememberMe": true
+  "rememberMe": false
 }
 
 ###
 
 GET {{base}}/api/v{{version}}/User/{{userid}}
-Authorization: {{token}}
+Authorization: bearer {{token}}

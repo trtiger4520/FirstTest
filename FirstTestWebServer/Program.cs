@@ -1,5 +1,6 @@
 using FirstTest.Database.FirstTestDB;
 using FirstTest.WebServer.Model.Config;
+using FirstTest.WebServer.Service;
 using FirstTest.WebServer.ServicesExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,14 @@ builder.Services.AddDbContext<TestDBContext>(option =>
 builder.Services.AddCoreServices();
 
 builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
+    .AddJwtBearer((options) =>
     {
         builder.Configuration.GetSection("JwtSettings").Bind(options);
+        options.TokenValidationParameters = Security.TokenValidationParameters(
+            builder.Configuration
+                .GetSection(SystemConfig.Name)
+                .GetValue<string>(nameof(SystemConfig.Secret))
+        );
     });
 
 builder.Services.AddControllers();
@@ -65,7 +71,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "���ε{���o���Y�����~�A�w�ߧY����I");
+    Log.Fatal(ex, "Server Crash!!");
 }
 finally
 {

@@ -48,7 +48,7 @@ namespace FirstTest.WebServer.Controllers
             if (user is null)
                 return LoginResult.False();
 
-            var expires = TimeSpan.FromDays(content.RememberMe ? 30 : 7);
+            var expires = TimeSpan.FromDays(content.RememberMe ? 3 : 1);
             var bearerToken = Security.GenerateBearerToken(
                 systemConfig.Secret,
                 expires,
